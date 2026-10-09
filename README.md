@@ -13,6 +13,21 @@ ItinerYey is a crowd-sourced guide to Philippine public transport (jeepney, bus,
 
 The model only *understands* the question and *reads* signboards. Fares, stops and transfers always come from the planner, so the assistant cannot invent routes.
 
+---
+
+## 🎯 Why Local AI? (Cloud-Only vs. On-Device)
+
+A cloud-only commute assistant fails exactly when commuters need it most. Running AI on-device transforms this into an experience that would otherwise be:
+
+| Dimension | Cloud-Only Approach | **ItinerYey (100% On-Device AI)** |
+|:---|:---|:---|
+| **Impossible / Difficult** | Cellular connections drop in underground MRT tunnels, dense underpasses, provincial highways, or whenever prepaid data runs out. Cloud AI simply stops working. | **Zero signal required.** The entire A* pathfinding graph (47,200+ segments) and Ollama models reside locally in device memory. It keeps routing even with airplane mode on. |
+| **Expensive** | Uploading high-res signboard photos to cloud vision APIs (GPT-4o / Claude Vision) incurs recurring API token fees (\$0.01–\$0.03/request) plus cellular data costs for commuters. | **Zero marginal cost.** 100% free for commuters, zero API bills for operators, and zero mobile load consumed. |
+| **Private** | Centralized transit apps harvest exact home-to-work routines, commute times, and continuous location history sent to remote servers. | **Absolute privacy.** Origins, destinations, and daily commute patterns never leave the user's local hardware. 0 bytes sent to the cloud. |
+| **Slow & Fragile** | Streaming multi-megabyte camera photos over congested 3G/4G networks introduces latency spikes, upload stalls, and network timeouts on the road. | **Instant local inference.** Photos and queries are processed directly on local hardware without network round-trips. |
+
+---
+
 ## Run the offline demo
 
 ```bash
@@ -21,10 +36,9 @@ ollama serve &
 ollama pull qwen2.5:3b
 ollama pull qwen2.5vl:3b
 
-# 2. App in offline mode (no Supabase keys needed)
+# 2. Run the app (no Supabase keys or .env needed!)
 npm install
-NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 NEXT_PUBLIC_SUPABASE_ANON_KEY=offline-demo \
-OFFLINE_MODE=1 npm run dev
+npm run dev
 ```
 
 Or simply `npm run demo` — builds once, serves on the local network and prints the URL for phones.
